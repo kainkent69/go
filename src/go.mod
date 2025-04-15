@@ -1,3 +1,3 @@
-module github.com/kainkent69/go.git
+module bingof
 
 go 1.24.1
