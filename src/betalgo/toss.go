@@ -4,13 +4,9 @@ import (
 	"math/rand"
 )
 
-type Toss struct {
-	// the percentate number of times you can get a truthy value
-	chance int
-	// the number of items there is to loop
-	out int
-}
+type Toss struct{}
 
+// TODO:  Make Sure That there is no more than 5 concurrent or next to next result
 // just make it a bit difficult to get a truthy value but it is even if weak
 func (t *Toss) Basic(chance, out uint32) int {
 	random := uint32(rand.Intn(int(out - 1)))

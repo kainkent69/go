@@ -2,40 +2,62 @@ package main
 
 import (
 	"bingof/betalgo"
+	"fmt"
 	"log"
 )
 
 func main() {
-	// choice1 := betalgo.NewChoice(1, "choioce1", 50)
-	// choice2 := betalgo.NewChoice(2, "choioce", 50)
-	// choices := []betalgo.Choice{*choice1, *choice2}
-	//
-	// options, err := betalgo.CreateChoices(choices, 100)
-	// if err != nil {
-	// 	log.Fatalf("Test: Something When wrong %s", err)
-	// }
-	//
-	// log.Printf("values: %v", options)
-	//
-	choice1 := betalgo.NewChoice(1, "choioce1", 25)
-	choice2 := betalgo.NewChoice(2, "choioce2", 25)
-
-	choice3 := betalgo.NewChoice(3, "choioce3", 20)
-	choice4 := betalgo.NewChoice(4, "choioce4", 10)
-	choice5 := betalgo.NewChoice(5, "choioce4", 20)
-
-	choices := []betalgo.Facetj{*choice1, *choice2, *choice3, *choice4, *choice5}
-
-	options, err := betalgo.SpreadEven(choices, 100)
-	if err != nil {
-		log.Fatalf("Test: Something When wrong %s", err)
+	shuf := new(betalgo.Shuff)
+	shuf.Items = make([]int, 0)
+	for i := range 100 {
+		shuf.Items = append(shuf.Items, i+1)
 	}
-	log.Printf("\n\nvalues: %v", options)
 
-	random := betalgo.SpreadEven(options)
-	options2 := []int{1, 2, 3, 3, 3, 3, 4, 4, 5, 6, 6, 5, 5, 5, 5}
+	log.Printf("Before the shuffle %v\n", shuf)
+	shuf.Shuffle()
+	log.Printf("Shuffled %v\n", shuf)
+	log.Printf("Shuffled lenth %v\n", len(shuf.Items))
+	fmt.Print("\n\n\n\n")
+	deal := betalgo.Deal(shuf.Items, 4, 49)
+	fmt.Printf("DEAL\n%v\n", deal)
+	fmt.Printf("\n\n\n\n")
 
-	log.Printf("\n\n Options randomized is this %v\n", random)
-	log.Printf("\n\n Options randomized2 is this %v\n", betalgo.SpreadEven(options2))
+	facet0 := betalgo.NewFacet(1, "Facet0", 30)
+	facet1 := betalgo.NewFacet(2, "Facet1", 30)
+	facet2 := betalgo.NewFacet(3, "Facet2", 30)
+	facet3 := betalgo.NewFacet(4, "Facet3", 10)
 
+	// initialize facet
+	ids, err := betalgo.InitFacets([]betalgo.Facet{*facet0, *facet1, *facet2, *facet3}, 100)
+	if err != nil {
+		log.Panic(err)
+	}
+	_ = ids
+
+	even := betalgo.SpreadEven([]betalgo.Facet{*facet0, *facet1, *facet2, *facet3}, 100)
+	log.Print(even)
+
+	fmt.Print("\n\n\n\n")
+	log.Println("LOGGER=======================TOSS=============================REGGOL")
+	for range 10 {
+		toss := new(betalgo.Toss)
+		res := toss.Basic(50, 100)
+		log.Printf("Toss Result: %d\n", res)
+	}
+
+	fmt.Print("\n\n\n\n")
+	number := *betalgo.NewRandomOptions([]int32{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, true, false, 3)
+
+	for range 10 {
+
+		random := number.GenerateRandom()
+		log.Printf("Number Result In Exact: %d\n", random)
+		res, err := number.GenerateCompareNumbers(random)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Printf("Did you win? %t\n", res)
+
+	}
 }

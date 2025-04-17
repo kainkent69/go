@@ -18,6 +18,11 @@ type RandomNumbersOptions struct {
 	DrawCount int
 }
 
+func NewRandomOptions(dect []int32, repeat,
+	anyOrder bool, count int) *RandomNumbersOptions {
+	return &RandomNumbersOptions{Dect: dect, Reapeats: repeat, AnyOrder: anyOrder, DrawCount: count}
+}
+
 func (opt RandomNumbersOptions) GenerateRandom() []int {
 	draw := func() int {
 		items := len(opt.Dect)

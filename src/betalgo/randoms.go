@@ -2,7 +2,8 @@ package betalgo
 
 import (
 	"errors"
-	"slices"
+	"log"
+	"math/rand"
 )
 
 // The betting algorithim to calculate players returns
@@ -46,35 +47,69 @@ func InitFacets(choices []Facet, target int) ([]int, error) {
 	return options, nil
 }
 
-func SpreadEven(values []int) []int {
-	skip := []int{}
-	data := slices.Clone(skip)
-	prev := 0
-	for _, value := range values {
-		if prev == value {
-			skip = append(skip, value)
-		} else {
-			data = append(data, value)
-		}
-		prev = value
-	}
+func SpreadEven(choices []Facet, target int) []int {
+	current := 0
+	data := make([]int, 0)
+	empty := 0
+	for i := 0; i < target; {
 
-	if len(skip) > 0 {
-		appended := append(data, skip...)
-		return SpreadEven(appended)
+		if empty == len(choices) {
+			log.Fatalf("betalgo.SpreadEven: Invalid Likelyhood distribution")
+		}
+		if current == len(choices) {
+			current = 0
+		}
+		choice := &choices[current]
+		if choice.Likelyhood <= 0 {
+			empty++
+		} else {
+			data = append(data, choice.ID)
+			empty = 0
+			choice.Likelyhood--
+			i++
+		}
+
+		current++
 	}
 	return data
 }
 
 // TODO: Shuffle
+type Shuff struct {
+	Items []int
+}
 
-type ShuffleOptions struct {
+func (c *Shuff) Shuffle() {
+	length := len(c.Items)
+	for i, v := range c.Items {
+		random := rand.Intn(length - 1)
+		cpy := c.Items[random]
+		c.Items[i] = cpy
+		c.Items[random] = v
+	}
 }
 
 // TODO: Dealings
-type DealData struct {
+type DealerData struct {
 	// the list of users
 	Users int
 	// The items will be shown as [user][cards]
 	Items [][]int
+}
+
+func Deal(items []int, users, todistribute int) *DealerData {
+	data := new(DealerData)
+	data.Items = make([][]int, users)
+	data.Users = users
+	current := 0
+	for i := range todistribute {
+		// reset every users
+		if current == users {
+			current = 0
+		}
+		data.Items[current] = append(data.Items[current], items[i])
+		current++
+	}
+
+	return data
 }
